@@ -1,0 +1,41 @@
+networks:
+  my_net_lr_2:
+
+volumes:
+  db_volume_lr_2:
+
+services:
+
+
+  db:
+    build:
+      context: DB
+    container_name:
+      db_postgres_lr_2
+    ports:
+     - "54322:5432" # DElete ThiS
+    volumes:
+      - db_volume_lr_2:/home/
+    networks:
+      - my_net_lr_2
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  
+  pgadmin:
+    build:
+      context: pgAdmin  
+    container_name: pgadmin_lr_2
+    ports:
+      - "8989:80"
+    networks:
+      - my_net_lr_2
+    restart: always
+    depends_on:
+      - db
+
